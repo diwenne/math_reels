@@ -1,0 +1,12 @@
+[
+  {
+    "concept": "Pythagorean Theorem",
+    "description": "Visual proof showing a^2 + b^2 = c^2 using rotating squares. Theme: Blue/Teal.",
+    "length": 15
+  },
+  {
+    "concept": "Euler's Identity",
+    "description": "Show the circle in the complex plane and how e^(i*pi) lands on -1.",
+    "length": 15
+  }
+]

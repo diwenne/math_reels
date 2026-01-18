@@ -1,0 +1,57 @@
+[
+  {
+    "concept": "Levy C Curve",
+    "description": "Visualize the recursive construction of the Levy C Curve. Start with a line, replace with two lines forming a right angled triangle hypotenuse, and repeat recursively to reveal the fractal behavior. Theme: Neon Cyberpunk.",
+    "length": 15
+  },
+  {
+    "concept": "Wave Extrapolation",
+    "description": "Show a simple wave form and animate its extrapolation over time or space, possibly visualizing the prediction error or pattern continuation. Keep it abstract and visual.",
+    "length": 10
+  },
+  {
+    "concept": "Recaman Sequence",
+    "description": "Visualize the Recamán's sequence using semi-circles on a number line. Show the 'step back if positive and new, else step forward' rule creating the chaotic yet ordered pattern.",
+    "length": 15
+  },
+  {
+    "concept": "Iterated Curves",
+    "description": "General iterated function system visualization. Show a shape repeatedly transformed (scaled/rotated/translated) to form a complex pattern like a fern or tree.",
+    "length": 12
+  },
+  {
+    "concept": "Fourier Epicycles",
+    "description": "Demonstrate how rotating circles (epicycles) attached to each other can trace out complex shapes. Show a simple drawing being traced by these circles.",
+    "length": 20
+  },
+  {
+    "concept": "Dragon Curve",
+    "description": "Visualize the folding of the Dragon Curve. Start with a strip of paper concept (folding in half), then unfold to show the 90-degree turns building the fractal.",
+    "length": 15
+  },
+  {
+    "concept": "Koch Snowflake",
+    "description": "Start with a triangle. Recursively add smaller triangles to the middle third of each side. Zoom in to show the infinite perimeter but finite area property.",
+    "length": 15
+  },
+  {
+    "concept": "Sierpinski Triangle",
+    "description": "Show the construction of the Sierpinski Triangle, either by removing center triangles recursively or by the 'Chaos Game' (random point dotting).",
+    "length": 12
+  },
+  {
+    "concept": "Interference Patterns",
+    "description": "Visualize two wave sources (like ripples in a pond) overlapping. Highlight the constructive (bright) and destructive (dark) interference regions.",
+    "length": 10
+  },
+  {
+    "concept": "Ulam Spiral",
+    "description": "Plot integers in a spiral. Highlight the prime numbers to reveal the diagonal patterns. Zoom out to show the structure.",
+    "length": 15
+  },
+  {
+    "concept": "Hilbert Curve",
+    "description": "Visualize the space-filling Hilbert Curve. Show iterations 1 through 6 filling a 2D square completely without crossing itself.",
+    "length": 15
+  }
+]
