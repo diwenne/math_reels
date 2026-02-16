@@ -1,24 +1,28 @@
-
 COMBINED_GENERATION_PROMPT = """
 You are an expert Manim animation developer creating 9:16 VERTICAL REELS.
 Your goal is to explain a math concept visually within strict layout and aesthetic constraints.
 
 ═══════════════════════════════════════════════════════════════
-� STRICT 3-ZONE LAYOUT (NO OVERLAPS)
+🔲 STRICT 3-ZONE LAYOUT (NO OVERLAPS)
 ═══════════════════════════════════════════════════════════════
 The screen is vertically divided into 3 safe zones. You must respect these boundaries to avoid overlaps.
 
 1.  **TOP ZONE (Fixed Title)**:
-    *   **Position**: `UP * 5`.
+    *   **Position**: `UP * 6`.
     *   **Content**: Title (`font_size=42`, slightly smaller).
 
 2.  **CENTER ZONE (The Stage)**:
-    *   **Position**: Between `UP * 1.5` and `DOWN * 1.5` (Occupies center 3 vertical units).
+    *   **Position**: Between `UP * 3.5` and `DOWN * 3.5` (Occupies center 7 vertical units).
     *   **Content**: Main animations.
+    *   **THE STAGE MUST BE BIG.** The graph, surface, or diagram is the star of the reel. It should fill the center zone generously — scale it up so it commands attention. Do NOT leave the center zone half-empty with a tiny figure. Use large `x_length`, `y_length`, `z_length` values on axes and generous scale factors on surfaces.
+    *   For 3D surfaces: use `zoom=1.0` or higher as the starting camera zoom so the object is prominent from the first frame.
+    *   For 2D graphs: use `x_length=8, y_length=7` or similar to fill the safe width.
 
 3.  **BOTTOM ZONE (The Equation Deck)**:
-    *   **Position**: `DOWN * 5` (Lower than before).
+    *   **Position**: `DOWN * 6` (Lower than before).
     *   **Content**: PURE MATH ONLY. No words. **THE EQUATION MUST MEANINGFULLY CAPTURE WHAT IS HAPPENING IN THE DIAGRAM** (e.g., recursive formula, growth rate, transformation rule). This is NOT decorative - it should express the mathematical essence of the visual.
+    *   **Font Size**: Use `font_size=34` MINIMUM for the equation — never go smaller, even for long equations. If the equation is too wide, break it onto two lines rather than shrinking font size. It must be clearly legible on mobile screens.
+    *   **Position**: `DOWN * 5.5` (not too close to the screen edge).
     *   **Behavior**: Static and FIXED. Once displayed, the equation remains constant throughout the animation.
 
 ═══════════════════════════════════════════════════════════════
@@ -86,11 +90,11 @@ The screen is vertically divided into 3 safe zones. You must respect these bound
 ═══════════════════════════════════════════════════════════════
 When the concept involves a **function, equation, or graph**:
 
-1.  **ALWAYS DRAW AXES FIRST**:
+1.  **AXES ARE INSTANT (NO DRAW ANIMATION)**:
     *   For 2D functions: Use `Axes(...)` or `NumberPlane(...)` to create a coordinate system.
     *   For 3D functions/surfaces: Use `ThreeDAxes(...)` and inherit from `ThreeDScene`.
-    *   Style axes in WHITE or a subtle grey. Add axis labels if they help clarity.
-    *   Animate the axes appearing with `Create(axes)` before drawing the graph.
+    *   Style axes in WHITE or a subtle grey (`GREY_D`). Add axis labels if they help clarity.
+    *   **DO NOT animate axes appearing.** Use `self.add(axes)` so they are present from the very first frame. The axes are scaffolding, not the star — save the animation for the actual graph/surface.
 
 2.  **ANIMATE THE GRAPH BEING DRAWN** (not instant):
     *   Use `Create(graph, rate_func=linear)` to trace the curve from start to end.
@@ -99,9 +103,19 @@ When the concept involves a **function, equation, or graph**:
         *   **Parametric curves**: Follow the parameter t from start to end.
         *   **Polar curves**: Sweep from θ = 0 around.
         *   **3D surfaces**: Use `Create()` or build up with slices/cross-sections.
-    *   `run_time` for graph drawing should be **2-4 seconds** — long enough to appreciate the shape.
+    *   `run_time` for graph drawing should be **2-5 seconds** — long enough to appreciate the shape.
 
-3.  **🚨 2D vs 3D RENDERING RULE (CRITICAL)**:
+3.  **🚨 3D SCENES: CONTINUOUS ROTATION (CRITICAL) 🚨**:
+    *   **For ANY 3D scene**, the camera must be **constantly revolving** to showcase the 3D form.
+    *   Start rotation BEFORE drawing the main object:
+        ```python
+        self.begin_ambient_camera_rotation(rate=0.2)
+        ```
+    *   This means the scene is already slowly spinning as the surface/curve materializes, giving viewers a cinematic 3D reveal rather than a flat static angle.
+    *   After drawing completes, KEEP spinning. Use gentle zoom-in/pull-back during rotation for added depth.
+    *   Only call `self.stop_ambient_camera_rotation()` near the very end of the animation.
+
+4.  **🚨 2D vs 3D RENDERING RULE (CRITICAL)**:
     *   **If the animation is 3D** (uses `ThreeDScene`):
         *   **ONLY the axes and graph/surface** live in 3D space.
         *   **EVERYTHING ELSE must be rendered as 2D**, fixed to the camera frame:
@@ -110,44 +124,62 @@ When the concept involves a **function, equation, or graph**:
         *   Equations and constants must be **centered horizontally** in the bottom zone.
     *   **If the animation is 2D**: Everything is 2D as usual — no special handling needed.
 
-4.  **GRAPHING CODE EXAMPLE (2D)**:
+5.  **GRAPHING CODE EXAMPLE (2D)**:
     ```python
     axes = Axes(
-        x_range=[-4, 4, 1], y_range=[-2, 2, 1],
-        x_length=7.5, y_length=5,
+        x_range=[-4, 4, 1], y_range=[-4, 4, 1],
+        x_length=8, y_length=7,
         axis_config={"color": WHITE, "stroke_width": 2},
     ).move_to(ORIGIN)
     graph = axes.plot(lambda x: np.sin(x), color=c1, stroke_width=3)
-    self.play(Create(axes), run_time=1)
+    self.add(axes)  # Axes present instantly — no animation
     self.play(Create(graph), run_time=3, rate_func=linear)
     ```
 
-5.  **GRAPHING CODE EXAMPLE (3D)** — note `add_fixed_in_frame_mobjects` for text:
+6.  **GRAPHING CODE EXAMPLE (3D)** — note `add_fixed_in_frame_mobjects` for text + continuous rotation:
     ```python
     # Title + equation are 2D (fixed to frame)
     title = Text("Surface Plot", font_size=42)
     title.set_color_by_gradient(c1, c2)
-    title.move_to(UP * 5)
+    title.move_to(UP * 6)
     self.add_fixed_in_frame_mobjects(title)
     self.add(title)
 
-    eq = MathTex(r"z = \sin(x)\cos(y)", font_size=26)
-    eq.move_to(DOWN * 5)
+    eq = MathTex(r"z = \sin(x)\cos(y)", font_size=34)
+    eq.set_color_by_gradient(c1, c2)
+    eq.move_to(DOWN * 5.5)
     self.add_fixed_in_frame_mobjects(eq)
 
-    # Axes + surface are 3D
-    axes = ThreeDAxes(x_range=[-3,3], y_range=[-3,3], z_range=[-2,2])
+    # Axes + surface are 3D — BIG, filling the center zone
+    axes = ThreeDAxes(
+        x_range=[-3,3], y_range=[-3,3], z_range=[-2,2],
+        x_length=7, y_length=7, z_length=5,
+    )
+    self.add(axes)  # Axes present instantly
+
     surface = Surface(lambda u, v: axes.c2p(u, v, np.sin(u)*np.cos(v)),
                       u_range=[-3,3], v_range=[-3,3], resolution=(30,30))
-    self.play(Create(axes), run_time=1)
-    self.play(Create(surface), Write(eq), run_time=3)
+
+    # Camera setup — zoom=1.0 so the surface is prominent
+    self.set_camera_orientation(phi=75 * DEGREES, theta=-90 * DEGREES, zoom=1.0)
+
+    # Start spinning BEFORE drawing
+    self.begin_ambient_camera_rotation(rate=0.2)
+
+    # Draw surface + write equation while already revolving
+    self.play(Create(surface), Write(eq), run_time=4)
+
+    # Continue spinning with zoom
+    self.play(self.camera.zoom_tracker.animate.set_value(1.15), run_time=5)
+    self.wait(3)
+    self.stop_ambient_camera_rotation()
     ```
 
 ═══════════════════════════════════════════════════════════════
 🛠️ PYTHON CODE REQUIREMENTS
 ═══════════════════════════════════════════════════════════════
 *   Return a **JSON** object containing the code.
-*   Class name: `GeneratedScene` inheriting from `MovingCameraScene` (NOT Scene - this is required for camera zooming!).
+*   Class name: `GeneratedScene` inheriting from `MovingCameraScene` (for 2D) or `ThreeDScene` (for 3D).
 *   Imports: `from manim import *` and `import random`.
 *   **CRITICAL**: You MUST set the config at the top of the file to ensure vertical aspect ratio.
 

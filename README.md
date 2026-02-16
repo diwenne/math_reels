@@ -60,6 +60,7 @@ The screen is divided into **3 strict zones**. Elements must NOT overlap.
 ├─────────────────────────────────────┤
 │        BOTTOM ZONE (Equation)       │  DOWN * 5.0
 │           font_size=48              │
+│   ** FIXED & CONSTANT POSITION **   │
 └─────────────────────────────────────┘
 ```
 
@@ -71,15 +72,16 @@ The screen is divided into **3 strict zones**. Elements must NOT overlap.
 
 **"Snap-and-Hold" Rhythm**:
 
-- **Morph**: `run_time = 0.3` (Fast transition)
-- **Pause**: `self.wait(0.5)` (Brief hold to see the step)
+- **Morph**: `run_time = 0.2` (Very fast snappy transition)
+- **Pause**: `self.wait(0.3)` (Quick hold, then next)
 
 **CRITICAL RULES**:
 
 1. **NO ACCELERATION**: Use constant timing. Never do `run_time = 1.0 if i < 3 else 0.5`.
 2. **LINEAR PROGRESSION**: Show every step (1, 2, 3... Final). Do not skip.
 3. **ITERATE UNTIL THE END**: Use the full duration. Don't stop early.
-4. **SHORT CONCLUSION**: Only 2s hold at the very end. Prioritize more iterations.
+4. **LOTS OF ITERATIONS**: Maximize the number of iterations so patterns can be viewed nicely and their structure becomes clear.
+5. **SHORT CONCLUSION**: Only 2s hold at the very end. Prioritize more iterations.
 
 **For Fractals**: Limit to 12-14 iterations max to avoid exponential segment explosion.
 
@@ -112,6 +114,10 @@ c1, c2 = RED, ORANGE  # or GOLD, MAROON or PINK, YELLOW
 
 - Title: `self.add(title)` immediately (no animation)
 - Center + Equation: Animate **SIMULTANEOUSLY** using `self.play(Create(diagram), Write(equation))`
+
+**Equation Zone**:
+
+- **EQUATIONS MUST STAY FIXED**: Once displayed, the equation at the bottom should remain constant and stationary throughout the animation. Do not move, fade, or update the equation text during iterations.
 - **Use `Create()` for diagrams, `Write()` for equations**. NO shifting/sliding in.
 
 **Banned Patterns**:

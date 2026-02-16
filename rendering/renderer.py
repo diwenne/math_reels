@@ -28,7 +28,7 @@ def render_from_plan(visual_plan_path: Path, output_file: Path):
     
     cmd = [
         "manim",
-        "--quality", "l", # Keep l for speed, but add fps
+        "--quality", "h", # High quality rendering
         "--resolution", "1080,1920",
         "--fps", "60",
         "--media_dir", str(visual_plan_path.parent / "media"),
